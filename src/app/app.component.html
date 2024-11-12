@@ -11,10 +11,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let userForm of form.controls">
+      <tr *ngFor="let userForm of form.controls; trackby:trackByUserId; let index=index; let first=first; let last=last">
         <ng-container [formGroup]="$any(userForm)">
           <td>
-            <span>{{userForm.value.id}}</span>
+            <span>{{index}}</span>
           </td>
           <td>
             <input formControlName="firstName" class="form-control"/>
@@ -30,12 +30,14 @@
             </select>
           </td>
           <td>
+            <button [disabled]="first" (click)="moveUp(index)">Up</button>
+            <button [disabled]="last" (click)="moveDown(index)">Down</button>
           </td>
           <td>
             <div class="action-wrapper">
-              <button class="btn btn-outline-secondary" (click)="addUser($any(userForm))">Add</button>
-              <button class="btn btn-outline-primary" (click)="updateUser($any(userForm))" [disabled]="userForm.value.id == 0">Edit</button>
-              <button class="btn btn-outline-danger" (click)="removeUser($any(userForm))" [disabled]="userForm.value.id == 0">Delete</button>
+              <button class="btn btn-outline-secondary" (click)="addNewForm(index)">Add</button>
+              <button class="btn btn-outline-primary" [disabled]="!userForm.value.id">Edit</button>
+              <button class="btn btn-outline-danger" [disabled]="first" (click)="deleteForm(index)">Delete</button>
             </div>
           </td>
         </ng-container>
