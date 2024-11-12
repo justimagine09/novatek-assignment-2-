@@ -113,6 +113,10 @@ export class AppComponent {
     return userForm.value.id;
   }
 
+  validateFormControl(userForm: FormGroup, controlName: string) {
+    return userForm.get(controlName)!.invalid && userForm.get(controlName)!.touched;
+  }
+
   private initializeForm(users: User[]) {
     if (users.length > 0) {
       this.form = this.fb.array(users.map(user => this.buildFormGroup(user)));
@@ -123,7 +127,7 @@ export class AppComponent {
       id: 0,
       firstName: '',
       lastName: '',
-      dropDown: '',
+      dropDown: null,
     });
 
     this.form = this.fb.array([
@@ -137,7 +141,7 @@ export class AppComponent {
       id: [user?.id ?? 0],
       firstName: [user?.firstName, [Validators.required]],
       lastName: [user?.lastName, [Validators.required]],
-      dropDown: [user?.dropDown, [Validators.required]],
+      dropDown: [user?.dropDown ?? null, [Validators.required]],
       unSaved: [!user?.id]
     });
   }

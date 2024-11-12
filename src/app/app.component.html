@@ -18,15 +18,25 @@
           </td>
           <td>
             <span *ngIf="!userForm.value.unSaved">{{userForm.value.firstName | titlecase}}</span>
-            <input *ngIf="userForm.value.unSaved" formControlName="firstName" class="form-control"/>
+            <input *ngIf="userForm.value.unSaved"
+              formControlName="firstName"
+              class="form-control"
+              [class.is-invalid]="validateFormControl(userForm, 'firstName')"/>
           </td>
           <td>
             <span *ngIf="!userForm.value.unSaved">{{userForm.value.lastName | titlecase}}</span>
-            <input *ngIf="userForm.value.unSaved" formControlName="lastName" class="form-control" />
+            <input *ngIf="userForm.value.unSaved" formControlName="lastName" class="form-control"
+              [class.is-invalid]="validateFormControl(userForm, 'lastName')"
+              />
           </td>
           <td>
             <span *ngIf="!userForm.value.unSaved">{{userForm.value.dropDown}}</span>
-            <select *ngIf="userForm.value.unSaved" formControlName="dropDown" class="form-control">
+            <select *ngIf="userForm.value.unSaved"
+              formControlName="dropDown"
+              class="form-control"
+              [class.is-invalid]="validateFormControl(userForm, 'dropDown')"
+            >
+              <option [value]="null">Select Options</option>
               <option>One</option>
               <option>Two</option>
               <option>Three</option>
