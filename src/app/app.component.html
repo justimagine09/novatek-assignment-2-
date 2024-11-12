@@ -1,0 +1,45 @@
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Drop-down</th>
+      <th>Up/Down</th>
+      <th>Operations</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let userForm of form.controls">
+      <ng-container [formGroup]="$any(userForm)">
+        <td>
+          <span>{{userForm.value.id}}</span>
+        </td>
+        <td>
+          <span>{{userForm.value.firstName}}</span>
+          <input formControlName="firstName" />
+        </td>
+        <td>
+          <span>{{userForm.value.lastName}}</span>
+          <input formControlName="lastName" />
+        </td>
+        <td>
+          {{userForm.value.dropDown}}
+          <select formControlName="dropDown">
+            <option>One</option>
+            <option>Two</option>
+            <option>Three</option>
+          </select>
+        </td>
+        <td>
+        </td>
+        <td>
+          <button (click)="addUser($any(userForm))">Add</button>
+          <button (click)="updateUser($any(userForm))" [disabled]="userForm.value.id == 0">Edit</button>
+          <button (click)="removeUser($any(userForm))" [disabled]="userForm.value.id == 0">Delete</button>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+</table>

@@ -6,5 +6,5 @@ import { provideStore } from '@ngrx/store';
 import { userReducer } from './store/user/user.reducer';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideStore()]
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideStore({users: userReducer})]
 };
