@@ -14,25 +14,24 @@ export const initialState: State = {
 
 export const userReducer = createReducer(
   initialState,
-  on(UserActions.add, (state, { payload }) => ({...add(state, payload)})), 
-  on(UserActions.update, (state, { payload }) => ({...update(state, payload)})),
+  on(UserActions.upserts, (state, { payload }) => ({...upserts(state, payload)})),
   on(UserActions.remove, (state, { payload }) => ({...remove(state, payload)}))
 );
 
-const add = (state: State, payload: User): State => {
-  const latestId = state.id + 1;
-  const newPayload = {...payload, id: latestId, position: state.users.length};
+const upserts = (state: State, payload: User[]) => {
+  let latestId = state.id;
+  
+  const users = payload.map((user: User) => {
+    if (user.id) {
+      return user;
+    };
 
-  return {...state, id: latestId, users: [...state.users, newPayload]};
+    latestId += 1;
+    return {...user , id: latestId};
+  });
+
+  return {...state, id: latestId, users: users};
 };
-
-const update = (state: State, payload: User): State => {
-  const index = state.users.findIndex(user => user.id == payload.id);
-  const users = [...state.users];
-  users.splice(index, 1, payload);
-
-  return {...state, users};
-}
 
 const remove = (state: State, payload: User): State => {
   // Remove User from the array

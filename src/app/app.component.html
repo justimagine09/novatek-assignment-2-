@@ -11,19 +11,22 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let userForm of form.controls; trackby:trackByUserId; let index=index; let first=first; let last=last">
-        <ng-container [formGroup]="$any(userForm)">
+      <tr *ngFor="let userForm of form.controls; trackBy:trackByUserId; let index=index; let first=first; let last=last">
+        <ng-container *ngIf="!userForm.value.deleted" [formGroup]="$any(userForm)">
           <td>
             <span>{{index}}</span>
           </td>
           <td>
-            <input formControlName="firstName" class="form-control"/>
+            <span *ngIf="!userForm.value.unSaved">{{userForm.value.firstName | titlecase}}</span>
+            <input *ngIf="userForm.value.unSaved" formControlName="firstName" class="form-control"/>
           </td>
           <td>
-            <input formControlName="lastName" class="form-control" />
+            <span *ngIf="!userForm.value.unSaved">{{userForm.value.lastName | titlecase}}</span>
+            <input *ngIf="userForm.value.unSaved" formControlName="lastName" class="form-control" />
           </td>
           <td>
-            <select formControlName="dropDown" class="form-control">
+            <span *ngIf="!userForm.value.unSaved">{{userForm.value.dropDown}}</span>
+            <select *ngIf="userForm.value.unSaved" formControlName="dropDown" class="form-control">
               <option>One</option>
               <option>Two</option>
               <option>Three</option>
@@ -36,12 +39,15 @@
           <td>
             <div class="action-wrapper">
               <button class="btn btn-outline-secondary" (click)="addNewForm(index)">Add</button>
-              <button class="btn btn-outline-primary" [disabled]="!userForm.value.id">Edit</button>
-              <button class="btn btn-outline-danger" [disabled]="first" (click)="deleteForm(index)">Delete</button>
+              <button class="btn btn-outline-primary" [disabled]="!userForm.value.id" (click)="editForm(userForm)">Edit</button>
+              <button class="btn btn-outline-danger" [disabled]="first && !userForm.value.id" (click)="deleteForm(index)">Delete</button>
             </div>
           </td>
         </ng-container>
       </tr>
     </tbody>
   </table>
+  <div class="save-button-wrapper">
+    <button *ngIf="showSaveButton()" class="btn btn-success" (click)="save()">Save</button>
+  </div>
 </div>

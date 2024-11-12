@@ -4,5 +4,5 @@ export interface User {
   firstName: string;
   lastName: string;
   dropDown: string;
-  position: number;
+  position?: number;
 }
