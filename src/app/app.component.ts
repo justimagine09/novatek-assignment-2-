@@ -6,14 +6,14 @@ import { selectUsers, userActions } from './store/user';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from './interfaces';
 import { debounceTime } from 'rxjs';
-import { TableColumnSortDirective } from './directives/table-column-sort.directive';
+import { UserFormTableColumnSortDirective } from './directives/user-form-table-column-sort.directive';
 import { DROP_DOWN_OPTIONS } from './constants/drop-down';
 import { DropdownIdToTextPipe } from './pipes/dropdown-id-to-text.pipe';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, TableColumnSortDirective, DropdownIdToTextPipe],
+  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, UserFormTableColumnSortDirective, DropdownIdToTextPipe],
   providers: [TitleCasePipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -46,7 +46,7 @@ export class AppComponent {
   }
 
   editForm(userForm: FormGroup) {
-    userForm.patchValue({unSaved: true});
+    userForm.patchValue({ unSaved: true });
   }
 
   deleteForm(index: number) {
@@ -71,8 +71,8 @@ export class AppComponent {
 
     this.form.controls[newIndex] = currentForm;
     this.form.controls[index] = targetForm;
-    currentForm.patchValue({position: newIndex});
-    targetForm.patchValue({position: index});
+    currentForm.patchValue({ position: newIndex });
+    targetForm.patchValue({ position: index });
 
     // If there is no un-saved data save new positions
     if (!this.hasUnSaveData) {
@@ -87,8 +87,8 @@ export class AppComponent {
 
     this.form.controls[newIndex] = currentForm;
     this.form.controls[index] = targetForm;
-    currentForm.patchValue({position: index});
-    targetForm.patchValue({position: newIndex});
+    currentForm.patchValue({ position: index });
+    targetForm.patchValue({ position: newIndex });
 
     // If there is no un-saved data save new positions
     if (!this.hasUnSaveData) {
@@ -112,8 +112,8 @@ export class AppComponent {
         position: index
       } as User;
     });
-    
-    this.store.dispatch(userActions.upserts({payload: values}));
+
+    this.store.dispatch(userActions.upserts({ payload: values }));
     this.hasUnSaveData = false;
     this.deletedUsers = [];
   }
@@ -142,7 +142,7 @@ export class AppComponent {
 
     this.form = this.fb.array([
       placeholder,
-      ...users.map((user, index) => this.buildFormGroup({...user, position: index + 1}))
+      ...users.map((user, index) => this.buildFormGroup({ ...user, position: index + 1 }))
     ]);
   }
 
@@ -159,7 +159,7 @@ export class AppComponent {
 
   private updatePositions() {
     this.form.controls.forEach((item, index) => {
-      item.patchValue({position: index});
+      item.patchValue({ position: index });
     });
   }
 }

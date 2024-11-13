@@ -1,4 +1,4 @@
-import { TableColumnSortDirective } from './table-column-sort.directive';
+import { TableColumnSortDirective } from './user-form-table-column-sort.directive';
 
 describe('TableColumnSortDirective', () => {
   it('should create an instance', () => {
