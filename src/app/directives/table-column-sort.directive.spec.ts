@@ -1,8 +1,8 @@
-import { TableColumnSortDirective } from './user-form-table-column-sort.directive';
+import { UserFormTableColumnSortDirective } from './user-form-table-column-sort.directive';
 
-describe('TableColumnSortDirective', () => {
+describe('UserFormTableColumnSortDirective', () => {
   it('should create an instance', () => {
-    const directive = new TableColumnSortDirective();
+    const directive = new UserFormTableColumnSortDirective();
     expect(directive).toBeTruthy();
   });
 });

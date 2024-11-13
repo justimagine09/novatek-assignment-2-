@@ -1,11 +1,11 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectUsers, userActions } from './store/user';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from './interfaces';
-import { debounceTime, interval, take } from 'rxjs';
+import { debounceTime, interval, Subject, Subscription, take, takeUntil } from 'rxjs';
 import { UserFormTableColumnSortDirective } from './directives/user-form-table-column-sort.directive';
 import { DROP_DOWN_OPTIONS } from './constants/drop-down';
 import { DropdownIdToTextPipe } from './pipes/dropdown-id-to-text.pipe';
@@ -18,7 +18,7 @@ import { DropdownIdToTextPipe } from './pipes/dropdown-id-to-text.pipe';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   readonly store = inject(Store);
   readonly fb = inject(FormBuilder);
   readonly dropDownOptions = DROP_DOWN_OPTIONS;
@@ -26,17 +26,29 @@ export class AppComponent {
   form!: FormArray<FormGroup>;
   hasUnSaveData = false;
   deletedUsers: FormGroup[] = [];
+  onDestroy$$ = new Subject();
+  formChangesSubscription?: Subscription;
 
   constructor() {
     this.store.select(selectUsers)
+      .pipe(takeUntil(this.onDestroy$$))
       .subscribe((users) => {
         this.initializeForm(users);
 
-        this.form.valueChanges.pipe(debounceTime(10))
+        /**
+         * Every changes check if has unSaved data
+         */
+        this.formChangesSubscription = this.form.valueChanges.pipe(debounceTime(10))
           .subscribe(() => {
             this.hasUnSaveData = this.form.controls.some((item) => item.value.unSaved);
           });
       });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$$.next(true);
+    this.onDestroy$$.complete();
+    this.formChangesSubscription?.unsubscribe();
   }
 
   addNewForm(index: number) {
@@ -58,7 +70,7 @@ export class AppComponent {
       this.deletedUsers.push(userForm);
     }
 
-    // If there is no user left in the array re-initialize the form a placeholder form control
+    // If there is no user left in the array and no deletedUsers, re-initialize the form to have a placeholder form control
     if (this.form.controls.length == 0 && !this.deletedUsers) {
       this.initializeForm([]);
     }
@@ -74,7 +86,7 @@ export class AppComponent {
     currentForm.patchValue({ position: newIndex });
     targetForm.patchValue({ position: index });
 
-    // If there is no un-saved data save new positions
+    // If there is no un-saved data save the new positions
     if (!this.hasUnSaveData) {
       this.save();
     }
@@ -90,7 +102,7 @@ export class AppComponent {
     currentForm.patchValue({ position: index });
     targetForm.patchValue({ position: newIndex });
 
-    // If there is no un-saved data save new positions
+    // If there is no un-saved data save the new positions
     if (!this.hasUnSaveData) {
       this.save();
     }
@@ -123,10 +135,12 @@ export class AppComponent {
   }
 
   validateFormControl(userForm: FormGroup, controlName: string) {
+    console.log(userForm.get(controlName));
     return userForm.get(controlName)!.invalid && userForm.get(controlName)!.touched;
   }
 
   private initializeForm(users: User[]) {
+    // Create a place holder form if there is no users
     if (users.length > 0) {
       this.form = this.fb.array(users.map(user => this.buildFormGroup(user)));
       return;

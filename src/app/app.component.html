@@ -60,14 +60,17 @@
   
             <td>
               <span *ngIf="!userForm.value.unSaved">{{userForm.value.dropDown | dropdownIdToText}}</span>
-              <select *ngIf="userForm.value.unSaved"
-                formControlName="dropDown"
-                class="form-control"
-                [class.is-invalid]="validateFormControl(userForm, 'dropDown')"
-              >
-                <option [value]="null">Select Options</option>
-                <option *ngFor="let option of dropDownOptions" [value]="option.id">{{option.text}}</option>
-              </select>
+              <div class="form-group">
+                <select *ngIf="userForm.value.unSaved"
+                  formControlName="dropDown"
+                  class="form-control"
+                  [class.is-invalid]="validateFormControl(userForm, 'dropDown')"
+                >
+                  <option [ngValue]="null" *ngIf="userForm.value.dropDown == null">Select Options</option>
+                  <option *ngFor="let option of dropDownOptions" [value]="option.id">{{option.text}}</option>
+                </select>
+                <i class="fa fa-chevron-down"></i>
+              </div>
             </td>
   
             <td>
