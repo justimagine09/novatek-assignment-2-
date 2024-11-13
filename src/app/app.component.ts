@@ -173,7 +173,7 @@ export class AppComponent implements OnDestroy {
 
   private updatePositions() {
     this.form.controls.forEach((item, index) => {
-      item.patchValue({ position: index }, {emitEvent: false});
+      item.patchValue({ position: index }, { emitEvent: false });
     });
   }
 }

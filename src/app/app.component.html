@@ -3,86 +3,143 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th 
+          <th
             #position="userFormTableColumnSort"
             [userFormTableColumnSort]="form"
-            userFormColumn='position'
-            (onSort)="firstName.reset(); lastName.reset(); dropDown.reset();">
+            userFormColumn="position"
+            (onSort)="firstName.reset(); lastName.reset(); dropDown.reset()"
+          >
             #
           </th>
           <th
             #firstName="userFormTableColumnSort"
             [userFormTableColumnSort]="form"
-            userFormColumn='firstName'
-            (onSort)="position.reset(); lastName.reset(); dropDown.reset();">
+            userFormColumn="firstName"
+            (onSort)="position.reset(); lastName.reset(); dropDown.reset()"
+          >
             First Name
           </th>
           <th
             #lastName="userFormTableColumnSort"
             [userFormTableColumnSort]="form"
-            userFormColumn='lastName'
-            (onSort)="firstName.reset(); position.reset(); dropDown.reset();">
+            userFormColumn="lastName"
+            (onSort)="firstName.reset(); position.reset(); dropDown.reset()"
+          >
             Last Name
           </th>
-          <th 
+          <th
             #dropDown="userFormTableColumnSort"
             [userFormTableColumnSort]="form"
-            userFormColumn='dropDown'
-            (onSort)="firstName.reset(); lastName.reset(); position.reset();">
+            userFormColumn="dropDown"
+            (onSort)="firstName.reset(); lastName.reset(); position.reset()"
+          >
             Drop-down
           </th>
           <th class="re-arrange-th">Up/Down</th>
           <th class="operation-th">Operations</th>
         </tr>
       </thead>
-      
+
       <tbody>
-        <tr *ngFor="let userForm of form.controls; trackBy:trackByUserId; let index=index; let first=first; let last=last">
-          <ng-container *ngIf="!userForm.value.deleted" [formGroup]="$any(userForm)">
+        <tr
+          *ngFor="
+            let userForm of form.controls;
+            trackBy: trackByUserId;
+            let index = index;
+            let first = first;
+            let last = last
+          "
+        >
+          <ng-container
+            *ngIf="!userForm.value.deleted"
+            [formGroup]="$any(userForm)"
+          >
             <td>
-              <span>{{userForm.value.position}}</span>
+              <span>{{ userForm.value.position }}</span>
             </td>
-  
+
             <td>
-              <span *ngIf="!userForm.value.unSaved">{{userForm.value.firstName | titlecase}}</span>
-              <input *ngIf="userForm.value.unSaved"
+              <span *ngIf="!userForm.value.unSaved">{{
+                userForm.value.firstName | titlecase
+              }}</span>
+              <input
+                *ngIf="userForm.value.unSaved"
                 formControlName="firstName"
                 class="form-control"
-                [class.is-invalid]="validateFormControl(userForm, 'firstName')"/>
+                [class.is-invalid]="validateFormControl(userForm, 'firstName')"
+              />
             </td>
-  
+
             <td>
-              <span *ngIf="!userForm.value.unSaved">{{userForm.value.lastName | titlecase}}</span>
-              <input *ngIf="userForm.value.unSaved" formControlName="lastName" class="form-control"
+              <span *ngIf="!userForm.value.unSaved">{{
+                userForm.value.lastName | titlecase
+              }}</span>
+              <input
+                *ngIf="userForm.value.unSaved"
+                formControlName="lastName"
+                class="form-control"
                 [class.is-invalid]="validateFormControl(userForm, 'lastName')"
-                />
+              />
             </td>
-  
+
             <td>
-              <span *ngIf="!userForm.value.unSaved">{{userForm.value.dropDown | dropdownIdToText}}</span>
-              <div class="form-group">
-                <select *ngIf="userForm.value.unSaved"
-                  formControlName="dropDown"
-                  class="form-control"
-                  [class.is-invalid]="validateFormControl(userForm, 'dropDown')"
+              <span *ngIf="!userForm.value.unSaved">{{
+                userForm.value.dropDown | dropdownIdToText
+              }}</span>
+              <select
+                *ngIf="userForm.value.unSaved"
+                formControlName="dropDown"
+                class="form-control form-select"
+                [class.is-invalid]="validateFormControl(userForm, 'dropDown')"
+              >
+                <option
+                  [ngValue]="null"
+                  *ngIf="userForm.value.dropDown == null"
                 >
-                  <option [ngValue]="null" *ngIf="userForm.value.dropDown == null">Select Options</option>
-                  <option *ngFor="let option of dropDownOptions" [value]="option.id">{{option.text}}</option>
-                </select>
-                <i class="fa fa-chevron-down"></i>
-              </div>
+                  Select Options
+                </option>
+                <option
+                  *ngFor="let option of dropDownOptions"
+                  [value]="option.id"
+                >
+                  {{ option.text }}
+                </option>
+              </select>
             </td>
-  
+
             <td>
-              <button [disabled]="first" (click)="moveUp(index)" class="arrow-button ri-arrow-up-s-line"></button>
-              <button [disabled]="last" (click)="moveDown(index)" class="arrow-button ri-arrow-down-s-line"></button>
+              <button
+                [disabled]="first"
+                (click)="moveUp(index)"
+                class="arrow-button ri-arrow-up-s-line"
+              ></button>
+              <button
+                [disabled]="last"
+                (click)="moveDown(index)"
+                class="arrow-button ri-arrow-down-s-line"
+              ></button>
             </td>
-  
+
             <td>
               <div class="action-wrapper">
-                <button class="btn btn-outline-secondary" (click)="addNewForm(index)">Add</button>
-                <button class="btn btn-outline-primary" (click)="editForm(userForm)">Edit</button>
-                <button class="btn btn-outline-danger" (click)="deleteForm(index)">Delete</button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="addNewForm(index)"
+                >
+                  Add
+                </button>
+                <button
+                  class="btn btn-outline-primary"
+                  (click)="editForm(userForm)"
+                >
+                  Edit
+                </button>
+                <button
+                  class="btn btn-outline-danger"
+                  (click)="deleteForm(index)"
+                >
+                  Delete
+                </button>
               </div>
             </td>
           </ng-container>
@@ -92,6 +149,8 @@
   </div>
 
   <div class="save-button-wrapper">
-    <button *ngIf="showSaveButton()" class="btn btn-success" (click)="save()">Save</button>
+    <button *ngIf="showSaveButton()" class="btn btn-success" (click)="save()">
+      Save
+    </button>
   </div>
 </div>
