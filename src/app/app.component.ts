@@ -1,19 +1,26 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, inject, OnDestroy } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectUsers, userActions } from './store/user';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { User } from './interfaces';
-import { debounceTime, interval, Subject, Subscription, take, takeUntil } from 'rxjs';
-import { UserFormTableColumnSortDirective } from './directives/user-form-table-column-sort.directive';
+import { debounceTime, Subject, Subscription, takeUntil } from 'rxjs';
 import { DROP_DOWN_OPTIONS } from './constants/drop-down';
+import { UserFormTableColumnSortDirective } from './directives/user-form-table-column-sort.directive';
+import { User } from './interfaces';
 import { DropdownIdToTextPipe } from './pipes/dropdown-id-to-text.pipe';
+import { selectUsers, userActions } from './store/user';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, UserFormTableColumnSortDirective, DropdownIdToTextPipe],
+  imports: [
+    RouterOutlet,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    UserFormTableColumnSortDirective,
+    DropdownIdToTextPipe
+  ],
   providers: [TitleCasePipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
