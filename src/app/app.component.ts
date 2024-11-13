@@ -135,7 +135,6 @@ export class AppComponent implements OnDestroy {
   }
 
   validateFormControl(userForm: FormGroup, controlName: string) {
-    console.log(userForm.get(controlName));
     return userForm.get(controlName)!.invalid && userForm.get(controlName)!.touched;
   }
 
