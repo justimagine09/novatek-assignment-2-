@@ -4,6 +4,6 @@ export interface User {
   id: number;
   firstName: string;
   lastName: string;
-  dropDown: DropDown | null;
+  dropDown: number | null;
   position?: number;
 }

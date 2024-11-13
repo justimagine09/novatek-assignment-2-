@@ -2,10 +2,34 @@
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th [tableColumnSort]="form" targetColumn='position'>#</th>
-        <th [tableColumnSort]="form" targetColumn='firstName'>First Name</th>
-        <th [tableColumnSort]="form" targetColumn='lastName'>Last Name</th>
-        <th [tableColumnSort]="form" targetColumn='dropDown'>Drop-down</th>
+        <th 
+          #position="tableColumnSort"
+          [tableColumnSort]="form"
+          targetColumn='position'
+          (onSort)="firstName.reset(); lastName.reset(); dropDown.reset();">
+          #
+        </th>
+        <th 
+          #firstName="tableColumnSort"
+          [tableColumnSort]="form"
+          targetColumn='firstName'
+          (onSort)="position.reset(); lastName.reset(); dropDown.reset();">
+          First Name
+        </th>
+        <th
+          #lastName="tableColumnSort"
+          [tableColumnSort]="form"
+          targetColumn='lastName'
+          (onSort)="firstName.reset(); position.reset(); dropDown.reset();">
+          Last Name
+        </th>
+        <th 
+          #dropDown="tableColumnSort"
+          [tableColumnSort]="form"
+          targetColumn='dropDown'
+          (onSort)="firstName.reset(); lastName.reset(); position.reset();">
+          Drop-down
+        </th>
         <th>Up/Down</th>
         <th>Operations</th>
       </tr>
@@ -30,7 +54,7 @@
               />
           </td>
           <td>
-            <span *ngIf="!userForm.value.unSaved">{{userForm.value.dropDown}}</span>
+            <span *ngIf="!userForm.value.unSaved">{{userForm.value.dropDown | dropdownIdToText}}</span>
             <select *ngIf="userForm.value.unSaved"
               formControlName="dropDown"
               class="form-control"

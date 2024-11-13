@@ -8,11 +8,12 @@ import { User } from './interfaces';
 import { debounceTime } from 'rxjs';
 import { TableColumnSortDirective } from './directives/table-column-sort.directive';
 import { DROP_DOWN_OPTIONS } from './constants/drop-down';
+import { DropdownIdToTextPipe } from './pipes/dropdown-id-to-text.pipe';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, TableColumnSortDirective],
+  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, TableColumnSortDirective, DropdownIdToTextPipe],
   providers: [TitleCasePipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -21,7 +22,7 @@ export class AppComponent {
   readonly store = inject(Store);
   readonly fb = inject(FormBuilder);
   readonly dropDownOptions = DROP_DOWN_OPTIONS;
-  
+
   form!: FormArray<FormGroup>;
   hasUnSaveData = false;
   deletedUsers: FormGroup[] = [];

@@ -1,4 +1,4 @@
-import { Directive, HostListener, Input, OnChanges } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, EventEmitter, HostListener, inject, Input, OnChanges, Output, Renderer2 } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 
 export enum SortOrder {
@@ -8,22 +8,31 @@ export enum SortOrder {
 
 @Directive({
   selector: '[tableColumnSort]',
-  standalone: true
+  standalone: true,
+  exportAs: "tableColumnSort"
 })
-export class TableColumnSortDirective implements OnChanges {
-  @Input() public tableColumnSort!: FormArray<FormGroup>;
-  @Input() public targetColumn!: string;
+export class TableColumnSortDirective implements AfterViewInit {
+  elementRef = inject(ElementRef);
+  renderer2 = inject(Renderer2);
+
+  @Output() onSort = new EventEmitter<SortOrder | null>();
+  @Input() tableColumnSort!: FormArray<FormGroup>;
+  @Input() targetColumn!: string;
+
   private sortOrder: SortOrder | null = null;
-
-  constructor() { }
-
-  ngOnChanges() {
-    console.log(this.tableColumnSort);
+  private iconElement!: HTMLLIElement;
+  
+  ngAfterViewInit(): void {
+    this.iconElement = this.renderer2.createElement('i');
+    this.renderer2.addClass(this.elementRef.nativeElement, 'cursor-pointer');
+    this.elementRef.nativeElement.append(this.iconElement);
+    this.setIcon();
   }
 
   @HostListener('click', [])
   onClicked() {
     this.updateSortOrderValue();
+    this.setIcon();
 
     this.tableColumnSort.controls = [...this.tableColumnSort.controls.sort((a, b) => {
       switch(this.sortOrder) {
@@ -37,9 +46,16 @@ export class TableColumnSortDirective implements OnChanges {
           return a.value.position - b.value.position;
       }
     })];
+
+    this.onSort.emit(this.sortOrder);
   }
 
-  sortAsc(a: any, b: any) {
+  reset() {
+    this.sortOrder = null;
+    this.setIcon();
+  }
+
+  private sortAsc(a: any, b: any) {
     if(typeof b.value[this.targetColumn] === 'string') {
       return a.value[this.targetColumn].localeCompare(b.value[this.targetColumn]);
     }
@@ -49,7 +65,7 @@ export class TableColumnSortDirective implements OnChanges {
     
   }
 
-  sortDesc(a: any, b: any) {
+  private sortDesc(a: any, b: any) {
     if(typeof a.value[this.targetColumn] === 'string') {
       return b.value[this.targetColumn].localeCompare(a.value[this.targetColumn]);
     }
@@ -69,6 +85,23 @@ export class TableColumnSortDirective implements OnChanges {
       
       default:
         this.sortOrder = SortOrder.ASC;
+    }
+  }
+
+  private setIcon() {
+    this.renderer2.setAttribute(this.iconElement, 'class', '');
+    
+    switch(this.sortOrder) {
+      case SortOrder.ASC:
+        this.renderer2.addClass(this.iconElement, 'ri-arrow-up-s-fill');
+        break;
+        
+      case SortOrder.DESC: 
+        this.renderer2.addClass(this.iconElement, 'ri-arrow-down-s-fill');
+        break;
+      
+      default:
+        this.renderer2.addClass(this.iconElement, 'ri-expand-up-down-fill');
     }
   }
 }
