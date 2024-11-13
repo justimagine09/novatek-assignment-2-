@@ -2,10 +2,10 @@
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th>#</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Drop-down</th>
+        <th [tableColumnSort]="form" targetColumn='position'>#</th>
+        <th [tableColumnSort]="form" targetColumn='firstName'>First Name</th>
+        <th [tableColumnSort]="form" targetColumn='lastName'>Last Name</th>
+        <th [tableColumnSort]="form" targetColumn='dropDown'>Drop-down</th>
         <th>Up/Down</th>
         <th>Operations</th>
       </tr>
@@ -14,7 +14,7 @@
       <tr *ngFor="let userForm of form.controls; trackBy:trackByUserId; let index=index; let first=first; let last=last">
         <ng-container *ngIf="!userForm.value.deleted" [formGroup]="$any(userForm)">
           <td>
-            <span>{{index}}</span>
+            <span>{{userForm.value.position}}</span>
           </td>
           <td>
             <span *ngIf="!userForm.value.unSaved">{{userForm.value.firstName | titlecase}}</span>
@@ -37,9 +37,7 @@
               [class.is-invalid]="validateFormControl(userForm, 'dropDown')"
             >
               <option [value]="null">Select Options</option>
-              <option>One</option>
-              <option>Two</option>
-              <option>Three</option>
+              <option *ngFor="let option of dropDownOptions" [value]="option.id">{{option.text}}</option>
             </select>
           </td>
           <td>

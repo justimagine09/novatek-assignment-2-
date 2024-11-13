@@ -6,18 +6,22 @@ import { selectUsers, userActions } from './store/user';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from './interfaces';
 import { debounceTime } from 'rxjs';
+import { TableColumnSortDirective } from './directives/table-column-sort.directive';
+import { DROP_DOWN_OPTIONS } from './constants/drop-down';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, TableColumnSortDirective],
   providers: [TitleCasePipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  store = inject(Store);
-  fb = inject(FormBuilder);
+  readonly store = inject(Store);
+  readonly fb = inject(FormBuilder);
+  readonly dropDownOptions = DROP_DOWN_OPTIONS;
+  
   form!: FormArray<FormGroup>;
   hasUnSaveData = false;
   deletedUsers: FormGroup[] = [];
@@ -35,7 +39,9 @@ export class AppComponent {
   }
 
   addNewForm(index: number) {
-    this.form.insert(index + 1, this.buildFormGroup());
+    const position = index + 1;
+    this.form.insert(position, this.buildFormGroup());
+    this.updatePositions();
   }
 
   editForm(userForm: FormGroup) {
@@ -45,6 +51,7 @@ export class AppComponent {
   deleteForm(index: number) {
     const userForm = this.form.controls[index];
     this.form.removeAt(index);
+    this.updatePositions();
 
     if (userForm.value.id) {
       this.deletedUsers.push(userForm);
@@ -57,11 +64,14 @@ export class AppComponent {
   }
 
   moveUp(index: number) {
+    const newIndex = index - 1;
     const currentForm = this.form.controls[index];
-    const targetForm = this.form.controls[index - 1];
+    const targetForm = this.form.controls[newIndex];
 
-    this.form.controls[index - 1] = currentForm;
+    this.form.controls[newIndex] = currentForm;
     this.form.controls[index] = targetForm;
+    currentForm.patchValue({position: newIndex});
+    targetForm.patchValue({position: index});
 
     // If there is no un-saved data save new positions
     if (!this.hasUnSaveData) {
@@ -76,15 +86,13 @@ export class AppComponent {
 
     this.form.controls[newIndex] = currentForm;
     this.form.controls[index] = targetForm;
+    currentForm.patchValue({position: index});
+    targetForm.patchValue({position: newIndex});
 
     // If there is no un-saved data save new positions
     if (!this.hasUnSaveData) {
       this.save();
     }
-  }
-
-  removeUser(userForm: FormGroup) {
-    this.store.dispatch(userActions.remove({payload: userForm.value}));
   }
 
   showSaveButton() {
@@ -128,11 +136,12 @@ export class AppComponent {
       firstName: '',
       lastName: '',
       dropDown: null,
+      position: 0
     });
 
     this.form = this.fb.array([
       placeholder,
-      ...users.map(user => this.buildFormGroup(user))
+      ...users.map((user, index) => this.buildFormGroup({...user, position: index + 1}))
     ]);
   }
 
@@ -142,7 +151,14 @@ export class AppComponent {
       firstName: [user?.firstName, [Validators.required]],
       lastName: [user?.lastName, [Validators.required]],
       dropDown: [user?.dropDown ?? null, [Validators.required]],
+      position: [user?.position ?? 0],
       unSaved: [!user?.id]
+    });
+  }
+
+  private updatePositions() {
+    this.form.controls.forEach((item, index) => {
+      item.patchValue({position: index});
     });
   }
 }
