@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { selectUsers, userActions } from './store/user';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { User } from './interfaces';
-import { debounceTime } from 'rxjs';
+import { debounceTime, interval, take } from 'rxjs';
 import { UserFormTableColumnSortDirective } from './directives/user-form-table-column-sort.directive';
 import { DROP_DOWN_OPTIONS } from './constants/drop-down';
 import { DropdownIdToTextPipe } from './pipes/dropdown-id-to-text.pipe';
@@ -59,7 +59,7 @@ export class AppComponent {
     }
 
     // If there is no user left in the array re-initialize the form a placeholder form control
-    if (this.form.controls.length == 0) {
+    if (this.form.controls.length == 0 && !this.deletedUsers) {
       this.initializeForm([]);
     }
   }
@@ -97,7 +97,7 @@ export class AppComponent {
   }
 
   showSaveButton() {
-    return (this.form.valid && this.hasUnSaveData) || this.deletedUsers.length;
+    return (this.form.valid && this.hasUnSaveData) || (this.deletedUsers.length && this.form.valid);
   }
 
   save() {
@@ -159,7 +159,7 @@ export class AppComponent {
 
   private updatePositions() {
     this.form.controls.forEach((item, index) => {
-      item.patchValue({ position: index });
+      item.patchValue({ position: index }, {emitEvent: false});
     });
   }
 }
